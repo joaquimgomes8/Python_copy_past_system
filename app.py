@@ -8,7 +8,8 @@ def bom_dia():
     return print("Bom dia")
 #===============================
 
-button = tk.Button(root, text="Bom dia", command=FUNCAO)
+button = tk.Button(root, text="Bom diaa")
+button.pack(pady=20)
 
 #===============================
 root.mainloop()
