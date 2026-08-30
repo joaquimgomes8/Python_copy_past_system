@@ -1,3 +1,5 @@
+#01. conseguir editar o texto de cada frase
+
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkfont
