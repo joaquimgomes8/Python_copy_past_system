@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 
 root = tk.Tk()
 root.title("AZShip System")
-root.geometry("400x420")
+root.geometry("360x360")
 root.attributes('-topmost', True)
 root.configure(bg='#5D3FD3')  # roxo principal
 root.resizable(False, False)
@@ -52,22 +52,22 @@ def abrir_editor_textos():
     editor.grab_set()
     editor.resizable(False, False)
 
-    container = ttk.Frame(editor, padding=12)
+    container = ttk.Frame(editor, padding=8)
     container.pack(fill='both', expand=True)
 
     campos = {}
 
     for chave, botao in BUTTONS.items():
         linha = ttk.Frame(container)
-        linha.pack(fill='x', pady=6)
+        linha.pack(fill='x', pady=4)
 
-        ttk.Label(linha, text='Botão:', width=12).pack(side='left')
-        entrada_label = ttk.Entry(linha, width=20)
+        ttk.Label(linha, text='Botão:', width=9).pack(side='left')
+        entrada_label = ttk.Entry(linha, width=16)
         entrada_label.insert(0, botao['label'])
         entrada_label.pack(side='left', padx=(4, 8))
 
-        ttk.Label(linha, text='Texto:', width=10).pack(side='left')
-        entrada_texto = ttk.Entry(linha, width=32)
+        ttk.Label(linha, text='Texto:', width=8).pack(side='left')
+        entrada_texto = ttk.Entry(linha, width=24)
         entrada_texto.insert(0, botao['text'])
         entrada_texto.pack(side='left', padx=(4, 0))
 
@@ -86,11 +86,11 @@ def abrir_editor_textos():
         editor.destroy()
 
     botoes = ttk.Frame(container)
-    botoes.pack(fill='x', pady=(10, 0))
+    botoes.pack(fill='x', pady=(8, 0))
     ttk.Button(botoes, text='Salvar', command=salvar).pack(side='right', padx=(0, 6))
     ttk.Button(botoes, text='Cancelar', command=editor.destroy).pack(side='right')
 
-    center_window(editor, 560, 320)
+    center_window(editor, 500, 270)
 
 #===============================
 
@@ -112,23 +112,23 @@ style.configure('Purple.TButton', background='#8A79FF', foreground='white', font
 style.map('Purple.TButton', background=[('active', '#6E5BFF'), ('pressed', '#5746E6')])
 
 header = ttk.Label(root, text='AZShip System', style='Purple.TLabel')
-header.pack(pady=(14, 2))
+header.pack(pady=(10, 1))
 
 subtitle = ttk.Label(root, text='Clique para copiar o texto:', style='Subtitle.TLabel')
-subtitle.pack(pady=(0, 8))
+subtitle.pack(pady=(0, 6))
 
-container = ttk.Frame(root, style='Card.TFrame', padding=(12, 10))
-container.pack(fill='both', expand=True, padx=18, pady=(8, 12))
+container = ttk.Frame(root, style='Card.TFrame', padding=(10, 8))
+container.pack(fill='both', expand=True, padx=12, pady=(6, 10))
 
 for chave, dados in BUTTONS.items():
     nome_botao = f'botao_{chave}'
     botao = ttk.Button(container, text=dados['label'], style='Purple.TButton', command=criar_callback(chave))
-    botao.pack(fill='x', pady=6)
+    botao.pack(fill='x', pady=4)
     botao.configure(cursor='hand2')
     globals()[nome_botao] = botao
 
 editar_button = ttk.Button(root, text='Editar textos', style='Purple.TButton', command=abrir_editor_textos)
-editar_button.pack(fill='x', padx=18, pady=(0, 14))
+editar_button.pack(fill='x', padx=12, pady=(0, 10))
 editar_button.configure(cursor='hand2')
 
 # Centralizar janela na tela
@@ -139,7 +139,7 @@ def center_window(win, target_w, target_h):
     y = (hs // 2) - (target_h // 2)
     win.geometry(f"{target_w}x{target_h}+{x}+{y}")
 
-center_window(root, 400, 420)
+center_window(root, 360, 360)
 
 #===============================
 root.mainloop()
