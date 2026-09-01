@@ -1,1 +1,2 @@
+#00 colocar por inatividade
 #01. conseguir editar o texto de cada frase

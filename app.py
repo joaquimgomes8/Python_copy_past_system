@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 
 root = tk.Tk()
 root.title("AZShip System")
-root.geometry("360x320")
+root.geometry("400x420")
 root.attributes('-topmost', True)
 root.configure(bg='#5D3FD3')  # roxo principal
 root.resizable(False, False)
@@ -33,6 +33,12 @@ def ajudo_algo_mais():
     root.clipboard_append(texto_ajudo_algo_mais)
     root.update()
 
+def inatividade():
+    texto_inatividade = "Visto que a solicitação inicial foi atendida/resolvida, e estamos há um tempo sem interação, vou finalizar esse chat, mas se houver alguma outra demanda, ou futura dúvida, é só nos chamar que estaremos à disposição!"
+    root.clipboard_clear()
+    root.clipboard_append(texto_inatividade)
+    root.update()
+
 #===============================
 
 # Estilo e layout
@@ -59,7 +65,7 @@ subtitle = ttk.Label(root, text='Clique para copiar o texto:', style='Subtitle.T
 subtitle.pack(pady=(0, 8))
 
 container = ttk.Frame(root, style='Card.TFrame', padding=(12, 10))
-container.pack(fill='both', expand=True, padx=18, pady=8)
+container.pack(fill='both', expand=True, padx=18, pady=(8, 12))
 
 btn1 = ttk.Button(container, text='Bom dia', style='Purple.TButton', command=bom_dia)
 btn1.pack(fill='x', pady=6)
@@ -73,9 +79,13 @@ btn3 = ttk.Button(container, text='Encerramento', style='Purple.TButton', comman
 btn3.pack(fill='x', pady=6)
 btn3.configure(cursor='hand2')
 
-btn4 = ttk.Button(container, text='Ajudo algo mais', style='Purple.TButton', command=ajudo_algo_mais)
+btn4 = ttk.Button(container, text='Inatividade', style='Purple.TButton', command=inatividade)
 btn4.pack(fill='x', pady=6)
 btn4.configure(cursor='hand2')
+
+btn5 = ttk.Button(container, text='Ajudo algo mais', style='Purple.TButton', command=ajudo_algo_mais)
+btn5.pack(fill='x', pady=6)
+btn5.configure(cursor='hand2')
 
 # Centralizar janela na tela
 def center_window(win, target_w, target_h):
@@ -85,7 +95,7 @@ def center_window(win, target_w, target_h):
     y = (hs // 2) - (target_h // 2)
     win.geometry(f"{target_w}x{target_h}+{x}+{y}")
 
-center_window(root, 360, 320)
+center_window(root, 400, 350)
 
 #===============================
 root.mainloop()
