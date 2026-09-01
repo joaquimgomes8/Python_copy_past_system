@@ -1,5 +1,3 @@
-#01. conseguir editar o texto de cada frase
-
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkfont
@@ -12,25 +10,25 @@ root.configure(bg='#5D3FD3')  # roxo principal
 root.resizable(False, False)
 #===============================
 def bom_dia():
-    texto_bom_dia = "Bom dia, meu nome é Joaquim e estarei de ajudando neste atendimento. Em que posso ajudar?"
+    texto_bom_dia = "Olá, bom dia! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?"
     root.clipboard_clear()
     root.clipboard_append(texto_bom_dia)
     root.update()
 
 def boa_tarde():
-    texto_boa_tarde = "Boa tarde, meu nome é Joaquim e estarei de ajudando neste atendimento. Em que posso ajudar?"
+    texto_boa_tarde = "Olá, boa tarde! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?"
     root.clipboard_clear()
     root.clipboard_append(texto_boa_tarde)
     root.update()
 
 def encerramento():
-    texto_encerramento = "Irei encerrar este atendimento, caso precise de ajuda novamente, estarei a disposição. Obrigado!"
+    texto_encerramento = "Irei finalizar o atendimento. Permanecemos à disposição para quaisquer dúvidas ou necessidades futuras. Obrigado!"
     root.clipboard_clear()
     root.clipboard_append(texto_encerramento)
     root.update()
 
 def ajudo_algo_mais():
-    texto_ajudo_algo_mais = "Posso te ajudar em mais alguma coisa?"
+    texto_ajudo_algo_mais = "Ajudo em algo mais?"
     root.clipboard_clear()
     root.clipboard_append(texto_ajudo_algo_mais)
     root.update()
