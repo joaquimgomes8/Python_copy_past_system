@@ -1,2 +1,2 @@
-#00 colocar por inatividade
+#00 conseguir ajustar a tela com o mouse
 #01. conseguir editar o texto de cada frase

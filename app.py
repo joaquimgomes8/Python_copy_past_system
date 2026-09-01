@@ -8,36 +8,89 @@ root.geometry("400x420")
 root.attributes('-topmost', True)
 root.configure(bg='#5D3FD3')  # roxo principal
 root.resizable(False, False)
+
 #===============================
-def bom_dia():
-    texto_bom_dia = "Olá, bom dia! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?"
+BUTTONS = {
+    'bom_dia': {
+        'label': 'Bom dia',
+        'text': 'Olá, bom dia! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?'
+    },
+    'boa_tarde': {
+        'label': 'Boa tarde',
+        'text': 'Olá, boa tarde! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?'
+    },
+    'encerramento': {
+        'label': 'Encerramento',
+        'text': 'Irei finalizar o atendimento. Permanecemos à disposição para quaisquer dúvidas ou necessidades futuras. Obrigado!'
+    },
+    'inatividade': {
+        'label': 'Inatividade',
+        'text': 'Visto que a solicitação inicial foi atendida/resolvida, e estamos há um tempo sem interação, vou finalizar esse chat, mas se houver alguma outra demanda, ou futura dúvida, é só nos chamar que estaremos à disposição! Obrigado!'
+    },
+    'ajudo_algo_mais': {
+        'label': 'Ajudo algo mais',
+        'text': 'Ajudo em algo mais?'
+    }
+}
+
+
+def copiar_texto(texto):
     root.clipboard_clear()
-    root.clipboard_append(texto_bom_dia)
+    root.clipboard_append(texto)
     root.update()
 
-def boa_tarde():
-    texto_boa_tarde = "Olá, boa tarde! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?"
-    root.clipboard_clear()
-    root.clipboard_append(texto_boa_tarde)
-    root.update()
 
-def encerramento():
-    texto_encerramento = "Irei finalizar o atendimento. Permanecemos à disposição para quaisquer dúvidas ou necessidades futuras. Obrigado!"
-    root.clipboard_clear()
-    root.clipboard_append(texto_encerramento)
-    root.update()
+def criar_callback(chave):
+    return lambda: copiar_texto(BUTTONS[chave]['text'])
 
-def ajudo_algo_mais():
-    texto_ajudo_algo_mais = "Ajudo em algo mais?"
-    root.clipboard_clear()
-    root.clipboard_append(texto_ajudo_algo_mais)
-    root.update()
 
-def inatividade():
-    texto_inatividade = "Visto que a solicitação inicial foi atendida/resolvida, e estamos há um tempo sem interação, vou finalizar esse chat, mas se houver alguma outra demanda, ou futura dúvida, é só nos chamar que estaremos à disposição!"
-    root.clipboard_clear()
-    root.clipboard_append(texto_inatividade)
-    root.update()
+def abrir_editor_textos():
+    editor = tk.Toplevel(root)
+    editor.title('Editar textos')
+    editor.configure(bg='#5D3FD3')
+    editor.transient(root)
+    editor.grab_set()
+    editor.resizable(False, False)
+
+    container = ttk.Frame(editor, padding=12)
+    container.pack(fill='both', expand=True)
+
+    campos = {}
+
+    for chave, botao in BUTTONS.items():
+        linha = ttk.Frame(container)
+        linha.pack(fill='x', pady=6)
+
+        ttk.Label(linha, text='Botão:', width=12).pack(side='left')
+        entrada_label = ttk.Entry(linha, width=20)
+        entrada_label.insert(0, botao['label'])
+        entrada_label.pack(side='left', padx=(4, 8))
+
+        ttk.Label(linha, text='Texto:', width=10).pack(side='left')
+        entrada_texto = ttk.Entry(linha, width=32)
+        entrada_texto.insert(0, botao['text'])
+        entrada_texto.pack(side='left', padx=(4, 0))
+
+        campos[chave] = {'label': entrada_label, 'text': entrada_texto}
+
+    def salvar():
+        for chave, campo in campos.items():
+            novo_label = campo['label'].get().strip() or BUTTONS[chave]['label']
+            novo_texto = campo['text'].get().strip() or BUTTONS[chave]['text']
+            BUTTONS[chave]['label'] = novo_label
+            BUTTONS[chave]['text'] = novo_texto
+
+            if 'botao_' + chave in globals():
+                globals()['botao_' + chave].config(text=novo_label)
+
+        editor.destroy()
+
+    botoes = ttk.Frame(container)
+    botoes.pack(fill='x', pady=(10, 0))
+    ttk.Button(botoes, text='Salvar', command=salvar).pack(side='right', padx=(0, 6))
+    ttk.Button(botoes, text='Cancelar', command=editor.destroy).pack(side='right')
+
+    center_window(editor, 560, 320)
 
 #===============================
 
@@ -67,25 +120,16 @@ subtitle.pack(pady=(0, 8))
 container = ttk.Frame(root, style='Card.TFrame', padding=(12, 10))
 container.pack(fill='both', expand=True, padx=18, pady=(8, 12))
 
-btn1 = ttk.Button(container, text='Bom dia', style='Purple.TButton', command=bom_dia)
-btn1.pack(fill='x', pady=6)
-btn1.configure(cursor='hand2')
+for chave, dados in BUTTONS.items():
+    nome_botao = f'botao_{chave}'
+    botao = ttk.Button(container, text=dados['label'], style='Purple.TButton', command=criar_callback(chave))
+    botao.pack(fill='x', pady=6)
+    botao.configure(cursor='hand2')
+    globals()[nome_botao] = botao
 
-btn2 = ttk.Button(container, text='Boa tarde', style='Purple.TButton', command=boa_tarde)
-btn2.pack(fill='x', pady=6)
-btn2.configure(cursor='hand2')
-
-btn3 = ttk.Button(container, text='Encerramento', style='Purple.TButton', command=encerramento)
-btn3.pack(fill='x', pady=6)
-btn3.configure(cursor='hand2')
-
-btn4 = ttk.Button(container, text='Inatividade', style='Purple.TButton', command=inatividade)
-btn4.pack(fill='x', pady=6)
-btn4.configure(cursor='hand2')
-
-btn5 = ttk.Button(container, text='Ajudo algo mais', style='Purple.TButton', command=ajudo_algo_mais)
-btn5.pack(fill='x', pady=6)
-btn5.configure(cursor='hand2')
+editar_button = ttk.Button(root, text='Editar textos', style='Purple.TButton', command=abrir_editor_textos)
+editar_button.pack(fill='x', padx=18, pady=(0, 14))
+editar_button.configure(cursor='hand2')
 
 # Centralizar janela na tela
 def center_window(win, target_w, target_h):
@@ -95,7 +139,7 @@ def center_window(win, target_w, target_h):
     y = (hs // 2) - (target_h // 2)
     win.geometry(f"{target_w}x{target_h}+{x}+{y}")
 
-center_window(root, 400, 350)
+center_window(root, 400, 420)
 
 #===============================
 root.mainloop()
