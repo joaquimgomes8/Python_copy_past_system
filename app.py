@@ -1,14 +1,71 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import colorchooser
 import tkinter.font as tkfont
+import colorsys
 
 SOFTWARE_TITLE = 'Copy Past System'
+WINDOW_COLOR = 'black'
+BUTTON_COLOR = '#263238'
+BUTTON_HOVER_COLOR = '#37474F'
+BUTTON_PRESSED_COLOR = '#1C2529'
+
+
+def cores_dos_botoes(cor_fundo):
+    try:
+        vermelho, verde, azul = (valor / 65535 for valor in root.winfo_rgb(cor_fundo))
+        matiz, saturacao, luminosidade = colorsys.rgb_to_hls(vermelho, verde, azul)
+
+        luminosidade_botao = max(0.18, min(0.38, luminosidade * 0.65))
+        luminosidade_hover = min(0.55, luminosidade_botao + 0.12)
+        luminosidade_pressionado = max(0.12, luminosidade_botao - 0.08)
+
+        def converter(nova_luminosidade):
+            rgb = colorsys.hls_to_rgb(matiz, nova_luminosidade, max(0.25, saturacao))
+            return '#{:02X}{:02X}{:02X}'.format(*(round(cor * 255) for cor in rgb))
+
+        return (
+            converter(luminosidade_botao),
+            converter(luminosidade_hover),
+            converter(luminosidade_pressionado),
+        )
+    except (ValueError, IndexError):
+        return BUTTON_COLOR, BUTTON_HOVER_COLOR, BUTTON_PRESSED_COLOR
+
+
+def aplicar_cores_dos_botoes():
+    style.configure(
+        'Purple.TButton',
+        background=BUTTON_COLOR,
+        bordercolor=BUTTON_COLOR,
+        lightcolor=BUTTON_COLOR,
+        darkcolor=BUTTON_PRESSED_COLOR,
+    )
+    style.map(
+        'Purple.TButton',
+        background=[
+            ('active', BUTTON_HOVER_COLOR),
+            ('pressed', BUTTON_PRESSED_COLOR),
+        ],
+        bordercolor=[
+            ('active', BUTTON_HOVER_COLOR),
+            ('pressed', BUTTON_PRESSED_COLOR),
+        ],
+        lightcolor=[
+            ('active', BUTTON_HOVER_COLOR),
+            ('pressed', BUTTON_PRESSED_COLOR),
+        ],
+        darkcolor=[
+            ('active', BUTTON_HOVER_COLOR),
+            ('pressed', BUTTON_PRESSED_COLOR),
+        ],
+    )
 
 root = tk.Tk()
 root.title(SOFTWARE_TITLE)
 root.geometry("360x360")
 root.attributes('-topmost', True)
-root.configure(bg='#5D3FD3')  # roxo principal
+root.configure(bg=WINDOW_COLOR)
 root.resizable(False, False)
 
 #===============================
@@ -49,7 +106,7 @@ def criar_callback(chave):
 def abrir_editor_textos():
     editor = tk.Toplevel(root)
     editor.title('Editar textos')
-    editor.configure(bg='#5D3FD3')
+    editor.configure(bg=WINDOW_COLOR)
     editor.transient(root)
     editor.grab_set()
     editor.resizable(False, False)
@@ -58,11 +115,27 @@ def abrir_editor_textos():
     container.pack(fill='both', expand=True)
 
     campos = {}
+    cor_selecionada = WINDOW_COLOR
 
     ttk.Label(container, text='Título do software:').pack(anchor='w', pady=(0, 2))
     entrada_titulo = ttk.Entry(container, width=54)
     entrada_titulo.insert(0, SOFTWARE_TITLE)
     entrada_titulo.pack(fill='x', pady=(0, 8))
+
+    linha_cor = ttk.Frame(container)
+    linha_cor.pack(fill='x', pady=(0, 8))
+    ttk.Label(linha_cor, text='Cor da janela:').pack(side='left')
+    botao_cor = ttk.Button(linha_cor, text=cor_selecionada)
+    botao_cor.pack(side='left', padx=(8, 0))
+
+    def selecionar_cor():
+        nonlocal cor_selecionada
+        _, nova_cor = colorchooser.askcolor(color=cor_selecionada, parent=editor)
+        if nova_cor:
+            cor_selecionada = nova_cor
+            botao_cor.config(text=cor_selecionada)
+
+    botao_cor.config(command=selecionar_cor)
 
     for chave, botao in BUTTONS.items():
         linha = ttk.Frame(container)
@@ -81,11 +154,20 @@ def abrir_editor_textos():
         campos[chave] = {'label': entrada_label, 'text': entrada_texto}
 
     def salvar():
-        global SOFTWARE_TITLE
+        global SOFTWARE_TITLE, WINDOW_COLOR
+        global BUTTON_COLOR, BUTTON_HOVER_COLOR, BUTTON_PRESSED_COLOR
 
         novo_titulo = entrada_titulo.get().strip() or SOFTWARE_TITLE
         SOFTWARE_TITLE = novo_titulo
+        WINDOW_COLOR = cor_selecionada
+        BUTTON_COLOR, BUTTON_HOVER_COLOR, BUTTON_PRESSED_COLOR = cores_dos_botoes(WINDOW_COLOR)
         root.title(SOFTWARE_TITLE)
+        root.configure(bg=WINDOW_COLOR)
+        style.configure('Purple.TFrame', background=WINDOW_COLOR)
+        style.configure('Purple.TLabel', background=WINDOW_COLOR)
+        style.configure('Subtitle.TLabel', background=WINDOW_COLOR)
+        style.configure('Card.TFrame', background=WINDOW_COLOR)
+        aplicar_cores_dos_botoes()
         header.config(text=SOFTWARE_TITLE)
 
         for chave, campo in campos.items():
@@ -104,7 +186,7 @@ def abrir_editor_textos():
     ttk.Button(botoes, text='Salvar', command=salvar).pack(side='right', padx=(0, 6))
     ttk.Button(botoes, text='Cancelar', command=editor.destroy).pack(side='right')
 
-    center_window(editor, 500, 310)
+    center_window(editor, 500, 340)
 
 #===============================
 
@@ -118,12 +200,12 @@ try:
     style.theme_use('clam')
 except Exception:
     pass
-style.configure('Purple.TFrame', background='#5D3FD3')
-style.configure('Purple.TLabel', background='#5D3FD3', foreground='white', font=heading_font)
-style.configure('Subtitle.TLabel', background='#5D3FD3', foreground='#EAE6FF', font=subtitle_font)
-style.configure('Card.TFrame', background='#6E57FF')
-style.configure('Purple.TButton', background='#8A79FF', foreground='white', font=btn_font, padding=6)
-style.map('Purple.TButton', background=[('active', '#6E5BFF'), ('pressed', '#5746E6')])
+style.configure('Purple.TFrame', background=WINDOW_COLOR)
+style.configure('Purple.TLabel', background=WINDOW_COLOR, foreground='white', font=heading_font)
+style.configure('Subtitle.TLabel', background=WINDOW_COLOR, foreground='#EAE6FF', font=subtitle_font)
+style.configure('Card.TFrame', background=WINDOW_COLOR)
+style.configure('Purple.TButton', foreground='white', font=btn_font, padding=6)
+aplicar_cores_dos_botoes()
 
 header = ttk.Label(root, text=SOFTWARE_TITLE, style='Purple.TLabel')
 header.pack(pady=(10, 1))
