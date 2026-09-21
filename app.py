@@ -173,6 +173,14 @@ def abrir_editor_textos():
 
         campos[chave] = {'label': entrada_label, 'text': entrada_texto}
 
+        def excluir_campo():
+            campos.pop(chave, None)
+            linha.destroy()
+            altura = 340 + max(0, len(campos) - 5) * 48
+            center_window(editor, 500, altura)
+
+        ttk.Button(linha, text='Excluir', command=excluir_campo).pack(side='left', padx=(8, 0))
+
     for chave, botao in BUTTONS.items():
         criar_campo(chave, botao)
 
@@ -201,6 +209,13 @@ def abrir_editor_textos():
         style.configure('Card.TFrame', background=WINDOW_COLOR)
         aplicar_cores_dos_botoes()
         header.config(text=SOFTWARE_TITLE)
+
+        for chave in list(BUTTONS):
+            if chave not in campos:
+                BUTTONS.pop(chave)
+                botao = globals().pop('botao_' + chave, None)
+                if botao is not None:
+                    botao.destroy()
 
         for chave, campo in campos.items():
             valores_atuais = BUTTONS.get(chave, {})
