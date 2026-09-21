@@ -1,0 +1,10 @@
+{
+  "title": "Copy Past System",
+  "window_color": "black",
+  "buttons": {
+    "bom_dia": {
+      "label": "Bom dia",
+      "text": "Olá, bom dia! Meu nome é Joaquim e serei responsável pelo seu atendimento. Como posso ajudá-lo?"
+    }
+  }
+}

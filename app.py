@@ -3,12 +3,18 @@ from tkinter import ttk
 from tkinter import colorchooser
 import tkinter.font as tkfont
 import colorsys
+import json
+import sys
+from pathlib import Path
 
 SOFTWARE_TITLE = 'Copy Past System'
 WINDOW_COLOR = 'black'
 BUTTON_COLOR = '#263238'
 BUTTON_HOVER_COLOR = '#37474F'
 BUTTON_PRESSED_COLOR = '#1C2529'
+
+APP_DIRECTORY = Path(sys.executable).resolve().parent if getattr(sys, 'frozen', False) else Path(__file__).resolve().parent
+CONFIG_FILE = APP_DIRECTORY / 'config.json'
 
 
 def cores_dos_botoes(cor_fundo):
@@ -91,6 +97,54 @@ BUTTONS = {
         'text': 'Ajudo em algo mais?'
     }
 }
+
+
+def carregar_configuracao():
+    global SOFTWARE_TITLE, WINDOW_COLOR, BUTTONS
+
+    try:
+        with CONFIG_FILE.open('r', encoding='utf-8') as arquivo:
+            configuracao = json.load(arquivo)
+
+        if isinstance(configuracao.get('title'), str) and configuracao['title'].strip():
+            SOFTWARE_TITLE = configuracao['title'].strip()
+        if isinstance(configuracao.get('window_color'), str) and configuracao['window_color'].strip():
+            WINDOW_COLOR = configuracao['window_color'].strip()
+        if isinstance(configuracao.get('buttons'), dict):
+            botoes_salvos = {}
+            for chave, botao in configuracao['buttons'].items():
+                if (
+                    isinstance(chave, str)
+                    and isinstance(botao, dict)
+                    and isinstance(botao.get('label'), str)
+                    and isinstance(botao.get('text'), str)
+                ):
+                    botoes_salvos[chave] = {
+                        'label': botao['label'],
+                        'text': botao['text'],
+                    }
+            BUTTONS = botoes_salvos
+    except (OSError, json.JSONDecodeError, AttributeError):
+        pass
+
+
+def salvar_configuracao():
+    configuracao = {
+        'title': SOFTWARE_TITLE,
+        'window_color': WINDOW_COLOR,
+        'buttons': BUTTONS,
+    }
+    try:
+        with CONFIG_FILE.open('w', encoding='utf-8') as arquivo:
+            json.dump(configuracao, arquivo, ensure_ascii=False, indent=2)
+    except OSError:
+        pass
+
+
+carregar_configuracao()
+BUTTON_COLOR, BUTTON_HOVER_COLOR, BUTTON_PRESSED_COLOR = cores_dos_botoes(WINDOW_COLOR)
+root.title(SOFTWARE_TITLE)
+root.configure(bg=WINDOW_COLOR)
 
 
 def copiar_texto(texto):
@@ -228,6 +282,7 @@ def abrir_editor_textos():
             else:
                 criar_botao_interface(chave)
 
+            salvar_configuracao()
         atualizar_tamanho_janela()
         editor.destroy()
 
@@ -284,6 +339,14 @@ def center_window(win, target_w, target_h):
     win.geometry(f"{target_w}x{target_h}+{x}+{y}")
 
 atualizar_tamanho_janela()
+
+
+def fechar_app():
+    salvar_configuracao()
+    root.destroy()
+
+
+root.protocol('WM_DELETE_WINDOW', fechar_app)
 
 #===============================
 root.mainloop()
