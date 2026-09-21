@@ -222,7 +222,8 @@ def abrir_editor_textos():
     ttk.Button(botoes, text='Salvar', command=salvar).pack(side='right', padx=(0, 6))
     ttk.Button(botoes, text='Cancelar', command=editor.destroy).pack(side='right')
 
-    center_window(editor, 500, 340)
+    altura_editor = 340 + max(0, len(campos) - 5) * 48
+    center_window(editor, 500, altura_editor)
 
 #===============================
 
