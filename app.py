@@ -3,7 +3,7 @@ from tkinter import ttk
 import tkinter.font as tkfont
 
 root = tk.Tk()
-root.title("AZShip System")
+root.title("Copy Past System")
 root.geometry("360x360")
 root.attributes('-topmost', True)
 root.configure(bg='#5D3FD3')  # roxo principal
