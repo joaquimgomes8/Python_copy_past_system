@@ -103,6 +103,23 @@ def criar_callback(chave):
     return lambda: copiar_texto(BUTTONS[chave]['text'])
 
 
+def criar_botao_interface(chave):
+    botao = ttk.Button(
+        container,
+        text=BUTTONS[chave]['label'],
+        style='Purple.TButton',
+        command=criar_callback(chave),
+    )
+    botao.pack(fill='x', pady=4)
+    botao.configure(cursor='hand2')
+    globals()['botao_' + chave] = botao
+
+
+def atualizar_tamanho_janela():
+    altura = 360 + max(0, len(BUTTONS) - 5) * 42
+    center_window(root, 360, altura)
+
+
 def abrir_editor_textos():
     editor = tk.Toplevel(root)
     editor.title('Editar textos')
@@ -137,8 +154,11 @@ def abrir_editor_textos():
 
     botao_cor.config(command=selecionar_cor)
 
-    for chave, botao in BUTTONS.items():
-        linha = ttk.Frame(container)
+    lista_campos = ttk.Frame(container)
+    lista_campos.pack(fill='x')
+
+    def criar_campo(chave, botao):
+        linha = ttk.Frame(lista_campos)
         linha.pack(fill='x', pady=4)
 
         ttk.Label(linha, text='Botão:', width=9).pack(side='left')
@@ -152,6 +172,18 @@ def abrir_editor_textos():
         entrada_texto.pack(side='left', padx=(4, 0))
 
         campos[chave] = {'label': entrada_label, 'text': entrada_texto}
+
+    for chave, botao in BUTTONS.items():
+        criar_campo(chave, botao)
+
+    def adicionar_campo():
+        numero = 1
+        while f'novo_{numero}' in campos:
+            numero += 1
+        chave = f'novo_{numero}'
+        criar_campo(chave, {'label': 'Novo botão', 'text': 'Texto para copiar'})
+        altura = 340 + max(0, len(campos) - 5) * 48
+        center_window(editor, 500, altura)
 
     def salvar():
         global SOFTWARE_TITLE, WINDOW_COLOR
@@ -171,18 +203,22 @@ def abrir_editor_textos():
         header.config(text=SOFTWARE_TITLE)
 
         for chave, campo in campos.items():
-            novo_label = campo['label'].get().strip() or BUTTONS[chave]['label']
-            novo_texto = campo['text'].get().strip() or BUTTONS[chave]['text']
-            BUTTONS[chave]['label'] = novo_label
-            BUTTONS[chave]['text'] = novo_texto
+            valores_atuais = BUTTONS.get(chave, {})
+            novo_label = campo['label'].get().strip() or valores_atuais.get('label', 'Novo botão')
+            novo_texto = campo['text'].get().strip() or valores_atuais.get('text', 'Texto para copiar')
+            BUTTONS[chave] = {'label': novo_label, 'text': novo_texto}
 
             if 'botao_' + chave in globals():
                 globals()['botao_' + chave].config(text=novo_label)
+            else:
+                criar_botao_interface(chave)
 
+        atualizar_tamanho_janela()
         editor.destroy()
 
     botoes = ttk.Frame(container)
     botoes.pack(fill='x', pady=(8, 0))
+    ttk.Button(botoes, text='Adicionar botão', command=adicionar_campo).pack(side='left')
     ttk.Button(botoes, text='Salvar', command=salvar).pack(side='right', padx=(0, 6))
     ttk.Button(botoes, text='Cancelar', command=editor.destroy).pack(side='right')
 
@@ -216,14 +252,10 @@ subtitle.pack(pady=(0, 6))
 container = ttk.Frame(root, style='Card.TFrame', padding=(10, 8))
 container.pack(fill='both', expand=True, padx=12, pady=(6, 10))
 
-for chave, dados in BUTTONS.items():
-    nome_botao = f'botao_{chave}'
-    botao = ttk.Button(container, text=dados['label'], style='Purple.TButton', command=criar_callback(chave))
-    botao.pack(fill='x', pady=4)
-    botao.configure(cursor='hand2')
-    globals()[nome_botao] = botao
+for chave in BUTTONS:
+    criar_botao_interface(chave)
 
-editar_button = ttk.Button(root, text='Editar textos', style='Purple.TButton', command=abrir_editor_textos)
+editar_button = ttk.Button(root, text='Editar textos/cores', style='Purple.TButton', command=abrir_editor_textos)
 editar_button.pack(fill='x', padx=12, pady=(0, 10))
 editar_button.configure(cursor='hand2')
 
@@ -235,7 +267,7 @@ def center_window(win, target_w, target_h):
     y = (hs // 2) - (target_h // 2)
     win.geometry(f"{target_w}x{target_h}+{x}+{y}")
 
-center_window(root, 360, 360)
+atualizar_tamanho_janela()
 
 #===============================
 root.mainloop()
